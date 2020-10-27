@@ -1,10 +1,33 @@
 from flask import Flask, render_template
+import numpy as np
 import geopandas as gpd
 import altair as alt
 
 app = Flask(__name__)
 
 base_map_df = gpd.read_file("static/data/small_bay_topo.json")
+vessels = gpd.read_file('static/data/bay_traffic.csv', GEOM_POSSIBLE_NAMES="geometry", KEEP_GEOM_COLUMNS="NO")
+
+vessels['max_SOG'] = vessels['max_SOG'].astype(float)
+vessels_LOA = vessels.LOA.to_numpy()
+vessels_LOA[vessels_LOA == ''] = '0'
+vessels.LOA = vessels_LOA.astype(float)
+
+speed = np.repeat('10-20kt', vessels.shape[0])
+speed[vessels.max_SOG > 20] = '20-30kt'
+speed[vessels.max_SOG > 30] = '>30kt'
+speed[vessels.max_SOG <= 10] = '0-10kt'
+vessels['Speed'] = speed
+
+
+selection = alt.selection_multi(fields=['Speed'])
+
+color = alt.condition(selection,
+                      alt.value('orange'),
+                      alt.value('lightgray'))
+
+opacity = alt.condition(selection, alt.value(0.03), alt.value(0))
+
 
 base_map = alt.Chart(base_map_df).mark_geoshape(
 	color="#333333", strokeWidth=0
@@ -15,7 +38,19 @@ base_map = alt.Chart(base_map_df).mark_geoshape(
         height=800
     )
 
-base_map_json = base_map.to_json()
+
+vessel_map = alt.Chart(vessels).mark_geoshape(filled=False,
+                                              color='orange',
+                                              strokeWidth=1).encode(opacity=opacity)
+
+legend = alt.Chart(vessels).mark_point().encode(
+    y=alt.Y('Speed:N', axis=alt.Axis(orient='right')),
+    color=color
+).add_selection(
+    selection
+)
+
+map_json = (base_map + vessel_map | legend).to_json()
 
 @app.route('/')
 def index():
@@ -23,4 +58,4 @@ def index():
 
 @app.route('/getMap')
 def getMap():
-	return base_map_json
+	return map_json
