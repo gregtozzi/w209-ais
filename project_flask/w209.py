@@ -19,8 +19,13 @@ speed[vessels.max_SOG > 30] = '>30kt'
 speed[vessels.max_SOG <= 10] = '0-10kt'
 vessels['Speed'] = speed
 
+Length = np.repeat('100-200m', vessels.shape[0])
+Length[vessels.LOA >= 200] = '200-300m'
+Length[vessels.LOA >= 300] = '>300m'
+Length[vessels.LOA < 100] = '0-100m'
+vessels['Length'] = Length
 
-selection = alt.selection_multi(fields=['Speed'])
+selection = alt.selection_multi(fields=['Speed', 'Length'])
 
 color = alt.condition(selection,
                       alt.value('orange'),
@@ -43,8 +48,9 @@ vessel_map = alt.Chart(vessels).mark_geoshape(filled=False,
                                               color='orange',
                                               strokeWidth=1).encode(opacity=opacity)
 
-legend = alt.Chart(vessels).mark_point().encode(
-    y=alt.Y('Speed:N', axis=alt.Axis(orient='right')),
+legend = alt.Chart(vessels).mark_rect().encode(
+    y=alt.Y('Speed:O', axis=alt.Axis(orient='right')),
+    x='Length:O',
     color=color
 ).add_selection(
     selection
