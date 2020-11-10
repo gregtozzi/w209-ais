@@ -8,6 +8,7 @@ app = Flask(__name__)
 base_map_df = gpd.read_file("static/data/small_bay_topo.json")
 vessels = gpd.read_file('static/data/bay_traffic.csv', GEOM_POSSIBLE_NAMES="geometry", KEEP_GEOM_COLUMNS="NO")
 
+"""
 vessels['max_SOG'] = vessels['max_SOG'].astype(float)
 vessels_LOA = vessels.LOA.to_numpy()
 vessels_LOA[vessels_LOA == ''] = '0'
@@ -24,6 +25,7 @@ Length[vessels.LOA >= 200] = '200-300m'
 Length[vessels.LOA >= 300] = '>300m'
 Length[vessels.LOA < 100] = '0-100m'
 vessels['Length'] = Length
+"""
 
 selection = alt.selection_multi(fields=['Speed', 'Length'])
 
