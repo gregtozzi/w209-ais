@@ -2,10 +2,11 @@ from flask import Flask, render_template
 import numpy as np
 import geopandas as gpd
 import altair as alt
+from map_builder.build_map import build_map
 
 app = Flask(__name__)
 
-base_map_df = gpd.read_file("static/data/small_bay_topo.json")
+#base_map_df = gpd.read_file("static/data/small_bay_topo.json")
 vessels = gpd.read_file('static/data/bay_traffic.csv', GEOM_POSSIBLE_NAMES="geometry", KEEP_GEOM_COLUMNS="NO")
 
 """
@@ -36,14 +37,16 @@ color = alt.condition(selection,
 opacity = alt.condition(selection, alt.value(0.03), alt.value(0))
 
 
-base_map = alt.Chart(base_map_df).mark_geoshape(
-	color="#333333", strokeWidth=0
-	).encode().project(
-        type='mercator', 
-    ).properties(
-        width=560,
-        height=800
-    )
+# base_map = alt.Chart(base_map_df).mark_geoshape(
+# 	color="#333333", strokeWidth=0
+# 	).encode().project(
+#         type='mercator',
+#     ).properties(
+#         width=560,
+#         height=800
+#     )
+
+base_map = build_map()
 
 
 vessel_map = alt.Chart(vessels).mark_geoshape(filled=False,
