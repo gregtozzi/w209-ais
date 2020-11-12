@@ -34,7 +34,7 @@ color = alt.condition(selection,
                       alt.value('orange'),
                       alt.value('lightgray'))
 
-opacity = alt.condition(selection, alt.value(0.03), alt.value(0))
+opacity = alt.condition(selection, alt.value(0.1), alt.value(0))
 
 """
 base_map = alt.Chart(base_map_df).mark_geoshape(
