@@ -36,18 +36,17 @@ color = alt.condition(selection,
 
 opacity = alt.condition(selection, alt.value(0.03), alt.value(0))
 
-
-# base_map = alt.Chart(base_map_df).mark_geoshape(
-# 	color="#333333", strokeWidth=0
-# 	).encode().project(
-#         type='mercator',
-#     ).properties(
-#         width=560,
-#         height=800
-#     )
-
+"""
+base_map = alt.Chart(base_map_df).mark_geoshape(
+		color="#333333", strokeWidth=0
+	).encode().project(
+		type='mercator',
+	).properties(
+		width=560,
+		height=800
+	)
+"""
 base_map = build_map()
-
 
 vessel_map = alt.Chart(vessels).mark_geoshape(filled=False,
                                               color='orange',

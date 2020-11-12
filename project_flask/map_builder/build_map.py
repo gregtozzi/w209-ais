@@ -6,7 +6,7 @@ import numpy as np
 import math
 
 
-def base_map(df, color='#333333', dimensions=(880, 800), projection='mercator'):
+def base_map(df, color='#333333', dimensions=(560, 790), projection='mercator'):
     rendered_map = alt.Chart(df).mark_geoshape(color=color, strokeWidth=0).encode().project(
         type=projection,
     ).properties(
@@ -43,12 +43,14 @@ def build_map():
 
     locations_df = pd.DataFrame(locations, columns=['Name', 'LAT', 'LON', 'Angle'])
 
-    city_annotations = alt.Chart(locations_df).encode(text='Name:N', latitude='LAT', longitude='LON')
 
+    city_annotations = alt.Chart(locations_df).encode(text='Name:N', latitude='LAT', longitude='LON').mark_text(angle=0, font='Roboto-Thin.ttf')
+    """
     city_layers = [
         city_annotations.transform_filter(alt.datum.Name == name).mark_text(angle=angle, font='Roboto-Thin.ttf')
         for (name, angle) in zip(locations_df.Name, locations_df.Angle)
     ]
+    """
 
     bridges = [['Golden Gate', 37.825544, -122.479248],
                ['Golden Gate', 37.810238, -122.477471],
@@ -84,6 +86,8 @@ def build_map():
     bridges = gpd.GeoDataFrame(bridges, columns=['Name', 'LAT', 'LON'])
     bridge_points = [Point(xy) for xy in zip(bridges.LON, bridges.LAT)]
     bridges['geometry'] = bridge_points
+    bridges = bridges.groupby(['Name'])['geometry'].apply(lambda x: LineString(x.tolist()))
+    bridges = gpd.GeoDataFrame(bridges)
     bridge_map = alt.Chart(bridges).mark_geoshape(filled=False,
                                                   color='white',
                                                   strokeWidth=1.25)
@@ -164,6 +168,8 @@ def build_map():
         for (name, angle, size) in zip(water_df.Name, water_df.Angle, water_df.Size)
     ]
 
+    #final_chart = alt.layer(base, bridge_map, lat_map, lon_map, lat_annotations,
+    #                        lon_annotations, *city_layers, *water_layers)
     final_chart = alt.layer(base, bridge_map, lat_map, lon_map, lat_annotations,
-                            lon_annotations, *city_layers, *water_layers)
+                            lon_annotations, city_annotations)
     return final_chart
