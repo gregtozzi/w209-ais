@@ -18,4 +18,8 @@
 A tool for working with and converting shapefiles, geojson, and other formats.  Super not-intuative.
 The [R wrapper](https://cran.r-project.org/web/packages/rmapshaper/vignettes/rmapshaper.html) is a bit easier to use.
 
+### [Altair](https://altair-viz.github.io)
+
+### [Shapely](https://shapely.readthedocs.io/en/stable/manual.html)
+
 
