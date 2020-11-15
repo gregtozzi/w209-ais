@@ -388,7 +388,8 @@ def cluster_transits(df, diff_threshold=0.01, hausdorff_threshold=0.03):
     return clusters
 
 
-
+def write_clusters(df, transits):
+    for transit in transits
 
 
 

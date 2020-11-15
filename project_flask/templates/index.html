@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Headline or title</title>
+    <title>Visualizing Vessel Traffic</title>
     <link rel="stylesheet" href="static/css/main.css" />
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega@5"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega-lite@4.8.1"></script>
@@ -11,9 +11,86 @@
 
   <body>
     <h1>San Francisco Bay Vessel Traffic</h1>
-    <div class="description">January, 2015.  From U.S. Coast Guard AIS data compiled by NOAA.</div>
+    <div class="chart-footer">
+        Emma Tebbe | Greg Tozzi | Joanna Wang
+      </div>
+
+    <h2>Thank you for participating in our user test!</h2>
+    <div class="description">
+        The tool that you are going to help us evaluate is our final project for a data visualization class we are taking as part of the UC Berkeley School of Information's Master of Information and Data Science program.  Your candid feedback will help us understand how users will engage with the tool and will lead to improvements.
+      </div>
+
+    <h2>Project goals</h2>
+    <div class="description">
+        Mariners have plenty of options available for area familiarization:  Charts, the Coast Pilots, and Notices to Mariners.  While charts provide clues to where vessels may be encountered, and the Coast Pilots provide occasional text about traffic patters, mariners do not (to our knowledge) have a tool that provides a comprehensive understanding of vessel traffic.  We aim to fill this gap.
+      </div>
+
+    <div class="description">
+        In addition to serving the seagoing community, we expect that this tool would be useful to visual simulator operators seeking to create realistic background traffic.
+      </div>
+
+    <h2>Interacting with the tool</h2>
+    <div class="description">
+        First, some context.  You are about to access over 14,000 individual vessel transits that occurred in San Francisco Bay in January, 2015.  The lines plotted on the chart represent over 680,000 individual AIS reports recorded by the Coast Guard and compiled by NOAA.
+      </div>
+
+    <div class="description">
+        You can explore traffic patterns in the Bay by filtering the vessel tracks by the <strong>day of the week</strong> on which they were recorded, the <strong>maximum speed</strong> that the vessel reported during its transit in 10kt increments, and the vessel's <strong>length</strong> in 100m increments.  Select the day of the week by clicking one of the radio buttons.  The rectangular selection tool to the right of the chart initially shows orange for each combination of speed and length that was recorded on the day you selected.  To select an individual speed/length combination, click the corresponding square.  The unselected squares will turn gray.  To select more than one square, shift-click the squares you want.  The selected squares will turn orange.  Vessel tracks will appear and disappear based on your selections.
+      </div>
+
+    <div class="description">
+        Now, please scroll down to the chart, and take a few minutes familiarizing yourself with how it works.  Have fun, and please feel free to talk through your impressions, points of confusion, and overall initial sense of how it works.  When you're ready, scroll down a bit further to the tasks we'd like you to attempt.
+      </div>
+
+    <h2>The visualization</h2>
+
+    <form class="form", id="dayForm", name="dayForm">
+      <input type="radio" id="Mon" name="day" value="Mon" checked>
+      <label for="Mon">Mon</label>
+      <input type="radio" id="Tue" name="day" value="Tue">
+      <label for="Tue">Tue</label>
+      <input type="radio" id="Wed" name="day" value="Wed">
+      <label for="Wed">Wed</label>
+      <input type="radio" id="Thu" name="day" value="Thu">
+      <label for="Thu">Thu</label>
+      <input type="radio" id="Fri" name="day" value="Fri">
+      <label for="Fri">Fri</label>
+      <input type="radio" id="Sat" name="day" value="Sat">
+      <label for="Sat">Sat</label>
+      <input type="radio" id="Sun" name="day" value="Sun">
+      <label for="Sun">Sun</label>
+    </form>
+
     <div id="vis"></div>
+    <div class="chart-footer">
+         From U.S. Coast Guard AIS data compiled by NOAA | January, 2015
+      </div>
+   
+    <h2>Tasks</h2>
+    <div class="description">
+        We'd like for you to try a few things.  Please approach these tasks from the point of view of a mariner who has level of familiarity with San Francisco Bay.  If you don't think that you're quite there, feel free to ask clarifying questions.
+      </div>
+
+    <h3>Patterns of life</h3>
+    <ul class="description">
+        <li>What facility or facilities handle the largest vessels that call on the Bay?</li>
+        <li>Can you identify ferry routes that do not run on weekends?</li>
+        <li>Identify the high speed (>30kt) ferry routes in the Bay</li>
+      </ul>
+
+    <h3>Preferred routes</h3>
+    <ul class="description">
+        <li>Is there a difference between how smaller and larger vessels clear Point Richmond?</li>
+        <li>Is there a difference in preferred routes for deep and shallow draft vessels transiting Suisun Bay?</li>
+      </ul>
+
+    <h3>Transit planning</h3>
+    <ul class="description">
+        <li>You are preparing to transit from sea to Coast Guard Island on a Saturday.  Where do you expect to encounter the highest density of sailing vessels?</li>
+        <li>Your transit has been pushed to the following Monday.  Does this change your answer to the previous question?</li>
+        <li>Continuing with the previous questions, where do you expect to encounter vessels crossing your intended track?</li>
+      </ul>
+
   </body>
   <script src="static/js/main.js"></script>
 </html>
-

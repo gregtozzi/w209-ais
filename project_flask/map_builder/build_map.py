@@ -173,3 +173,27 @@ def build_map():
     final_chart = alt.layer(base, bridge_map, lat_map, lon_map, lat_annotations,
                             lon_annotations, city_annotations)
     return final_chart
+
+
+def vsl_map(df):
+    base_map = build_map()
+
+    selection = alt.selection_multi(fields=['Speed', 'Length'])
+
+    color = alt.condition(selection,
+                          alt.value('orange'),
+                          alt.value('lightgray'))
+
+    opacity = alt.condition(selection, alt.value(0.25), alt.value(0))
+
+    vessel_map = alt.Chart(df).mark_geoshape(filled=False,
+                                             color='orange',
+                                             strokeWidth=1).encode(opacity=opacity)
+
+    legend = alt.Chart(df).mark_rect().encode(y=alt.Y('Speed:O',
+                                              axis=alt.Axis(orient='right')),
+                                              x='Length:O',
+                                              color=color).add_selection(selection)
+
+    return (base_map + vessel_map | legend).to_json()
+

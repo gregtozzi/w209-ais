@@ -1,15 +1,43 @@
+/* roboto-condensed-regular - latin */
+@import url('https://fonts.googleapis.com/css2?family=Roboto&family=Roboto+Condensed:wght@700&display=swap');
+
 body {
   margin: 30px;
-  font-family: Helvetica Neue, Helvetica, sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 
 h1 {
+  font-family: 'Roboto Condensed', sans-serif;
+  color: #424242;
+}
+
+h2 {
+  font-family: 'Roboto Condensed', sans-serif;
+  color: #424242;
+}
+
+h3 {
+  font-family: 'Roboto Condensed', sans-serif;
   color: #424242;
 }
 
 .description {
-  font-family: Georgia, sans-serif;
-  max-width: 800px;
+  font-family: 'Roboto', sans-serif;
+  max-width: 600px;
+  text-align: justify;
+  text-justify: inter-word;
+  padding-bottom: 15px;
+}
+
+.form {
+  font-family: 'Roboto Condensed', sans-serif;
+}
+
+li {
+  font-family: 'Roboto', sans-serif;
+  max-width: 540px;
+  text-align: justify;
+  text-justify: inter-word;
 }
 
 th {
@@ -36,9 +64,8 @@ td {
 }
 
 .chart-footer {
-  font-style: italic;
   font-size: 10pt;
-  color: #aaa;
+  color: #424242;
 }
 
 div.tooltip { 
