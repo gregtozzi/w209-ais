@@ -26,15 +26,15 @@ def build_map():
                  ['Oakland', 37.811816, -122.275828, 0],
                  ['Berkeley', 37.872645, -122.277138, 0],
                  ['Alameda', 37.77, -122.26, 28],
-                 ['San Leandro', 37.726589, -122.148256],
-                 ['Hayward', 37.668277, -122.101679],
+                 ['San Leandro', 37.726589, -122.148256,0],
+                 ['Hayward', 37.668277, -122.101679,0],
                  ['Union City', 37.593332, -122.073275, 0],
-                 ['Fremont', 37.548661, -122.002047],
+                 ['Fremont', 37.548661, -122.002047,0],
                  ['Richmond', 37.936, -122.348282, 0],
                  ['Benicia', 38.07, -122.145650, 0],
-                 ['San Mateo', 37.564227, -122.347733],
-                 ['Redwood City', 37.484601, -122.253796],
-                 ['Palo Alto', 37.441588, -122.155226],
+                 ['San Mateo', 37.564227, -122.347733,0],
+                 ['Redwood City', 37.484601, -122.253796,0],
+                 ['Palo Alto', 37.441588, -122.155226,0],
                  ['Vallejo', 38.1, -122.25, 55],
                  ['Martinez', 38.014021, -122.145581, 0],
                  ['Tiburon', 37.89, -122.471, 45],
@@ -45,12 +45,12 @@ def build_map():
 
 
     city_annotations = alt.Chart(locations_df).encode(text='Name:N', latitude='LAT', longitude='LON').mark_text(angle=0, font='Roboto-Thin.ttf')
-    """
+
     city_layers = [
         city_annotations.transform_filter(alt.datum.Name == name).mark_text(angle=angle, font='Roboto-Thin.ttf')
         for (name, angle) in zip(locations_df.Name, locations_df.Angle)
     ]
-    """
+
 
     bridges = [['Golden Gate', 37.825544, -122.479248],
                ['Golden Gate', 37.810238, -122.477471],
@@ -161,17 +161,16 @@ def build_map():
         ['San Francisco Bay', 37.65, -122.275, 0, 12]
     ]
     water_df = pd.DataFrame(water_labels, columns=['Name', 'LAT', 'LON','Angle','Size'])
-    water_annotations = alt.Chart(water_df).encode(text='Name:N', latitude='LAT', longitude='LON')
+    water_annotations = alt.Chart(water_df).encode(text='Name:N', latitude='LAT', longitude='LON').mark_text(angle=0, font='Roboto-Thin.ttf',color='lightgrey')
 
     water_layers = [
         water_annotations.transform_filter(alt.datum.Name == name).mark_text(angle=angle, font='Roboto-Thin.ttf',color='lightgrey')
         for (name, angle, size) in zip(water_df.Name, water_df.Angle, water_df.Size)
     ]
 
-    #final_chart = alt.layer(base, bridge_map, lat_map, lon_map, lat_annotations,
-    #                        lon_annotations, *city_layers, *water_layers)
+    #final_chart = alt.layer(base, bridge_map, lat_map, lon_map, lat_annotations, lon_annotations, *city_layers, *water_layers)
     final_chart = alt.layer(base, bridge_map, lat_map, lon_map, lat_annotations,
-                            lon_annotations, city_annotations)
+                            lon_annotations, city_annotations, water_annotations)
     return final_chart
 
 
@@ -196,4 +195,3 @@ def vsl_map(df):
                                               color=color).add_selection(selection)
 
     return (base_map + vessel_map | legend).to_json()
-
