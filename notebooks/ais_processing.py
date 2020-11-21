@@ -2,8 +2,31 @@ import csv
 import json
 import numpy as np
 import pandas as pd
-from shapely.geometry import Point, LineString
+from shapely.geometry import Point, LineString, MultiLineString
+import geopandas as gpd
 
+
+def filter_to_map(map_path, data_path, output_path):
+    """
+    Given a map in a format readable by geopandas and a CSV
+    from marinecadestre.gov, extract points that lie on the
+    map and save as a new CSV.
+    
+    """
+    
+    map = gpd.read_file(map_path)
+    bounds = map.geometry.bounds
+    print('---------Map Bounds---------\n')
+    print(bounds)
+    minlon = float(bounds.minx)
+    minlat = float(bounds.miny)
+    maxlon = float(bounds.maxx)
+    maxlat = float(bounds.maxy)
+    
+    data = pd.read_csv(data_path)
+    data = data[(data.LAT > minlat) & (data.LAT < maxlat) & (data.LON > minlon) & (data.LON < maxlon)]
+    data.to_csv(output_path, index=False)
+                
 
 def ais_to_json(ais_path, json_path):
     """
@@ -89,6 +112,9 @@ def analyze_vessel_json(json_path, Prune=False, prune_path=None):
 
     # How many vessels do we have?
     num_vessels = len(data)
+    
+    print('---------AIS Data Report---------\n')
+    print('Total vessels - {}\n'.format(num_vessels))
 
     # Set up arrays to store statistics
     never_move     = []
@@ -103,14 +129,15 @@ def analyze_vessel_json(json_path, Prune=False, prune_path=None):
         SOG = np.array(vsl['SOG']).astype('float')
         if SOG.max() < 2:
             never_move.append(MMSI)
+            if len(never_move) % 10000 == 0:
+                print(len(never_move))
         if len(SOG) < 10:
             few_reports.append(MMSI)
         num_reports    = np.append(num_reports, len(SOG))
         moving_reports = np.append(moving_reports, (SOG > 2).sum())
         max_speed      = np.append(max_speed, SOG.max())
 
-    print('---------AIS Data Report---------\n')
-    print('Total vessels - {}\n'.format(num_vessels))
+    
     print('Vessels that never exceed 2kt - {}\n'.format(len(never_move)))
     print('------------------\n')
     print('Reports per vessel\n')
@@ -313,10 +340,10 @@ def transits_df(vsl_dict, output_path=None):
     df['length'] = length
 
     # Add binned values of vessel max speeds
-    df['max_SOG'] = (np.floor(df['SOG'] / 10) * 10).astype(int).astype(str) + '-' + (np.floor(df['SOG'] / 10 + 1) * 10).astype(int).astype(str) + 'kt'
+    df['Speed'] = (np.floor(df['SOG'] / 10) * 10).astype(int).astype(str) + '-' + (np.floor(df['SOG'] / 10 + 1) * 10).astype(int).astype(str) + 'kt'
 
     # Add binned values of vessel lengths
-    df['LOA'] = (np.floor(df['LOA_unbinned'] / 100) * 100).astype(int).astype(str) + '-' + (np.floor(df['LOA_unbinned'] / 100 + 1) * 100).astype(int).astype(str) + 'm'
+    df['Length'] = (np.floor(df['LOA_unbinned'] / 100) * 100).astype(int).astype(str) + '-' + (np.floor(df['LOA_unbinned'] / 100 + 1) * 100).astype(int).astype(str) + 'm'
     df = df.sort_values('length', ascending=False).reset_index(drop=True)
     # Return and (maybe) write the output
     if output_path:
@@ -388,8 +415,8 @@ def cluster_transits(df, diff_threshold=0.01, hausdorff_threshold=0.03):
     return clusters
 
 
-def write_clusters(df, transits):
-    for transit in transits
+#def write_clusters(df, transits):
+#    for transit in transits
 
 
 
