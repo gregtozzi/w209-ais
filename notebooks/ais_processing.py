@@ -425,6 +425,7 @@ def cluster_df(df, clusters):
     Speed = []
     Length = []
     Count = []
+    Route = []
     geometry = []
     
     for i in sig_clusters:
@@ -434,6 +435,7 @@ def cluster_df(df, clusters):
             day.append(dsl[0])
             Speed.append(dsl[1])
             Length.append(dsl[2])
+            Route.append(i)
             sub_cluster = np.array(cluster)[np.where((df.day[cluster] == dsl[0]) & (df.Speed[cluster] == dsl[1]) & (df.Length[cluster] == dsl[2]))[0]]
             n_lines = np.ceil(len(sub_cluster) / 10)
             Count.append(len(sub_cluster) / n_lines / 10)
@@ -442,9 +444,54 @@ def cluster_df(df, clusters):
             lines = MultiLineString(list(df.geometry[geom_index]))
             geometry.append(lines)
             
-    df_clustered = gpd.GeoDataFrame({'day': day,
+    df_clustered = gpd.GeoDataFrame({'Day': day,
                                      'Speed': Speed,
                                      'Length': Length,
                                      'Count': Count,
+                                     'Route': Route,
+                                     'geometry': geometry})
+    return df_clustered
+
+
+def cluster_df_test(df):
+    clusters = cluster_transits(df)
+    # Pick significant clusters
+    n_clusters = np.array([len(cluster) for cluster in clusters])
+    sig_clusters = np.where(n_clusters >= 10)[0]
+    
+    day = []
+    Speed = []
+    Length = []
+    Count = []
+    Route = []
+    geometry = []
+    
+    for i in sig_clusters:
+        cluster = clusters[i]
+        day_speed_len = set([xyz for xyz in zip(df.day[cluster], df.Speed[cluster], df.Length[cluster])])
+        for dsl in day_speed_len:
+            sub_cluster = np.array(cluster)[np.where((df.day[cluster] == dsl[0]) & (df.Speed[cluster] == dsl[1]) & (df.Length[cluster] == dsl[2]))[0]]
+            n_lines = 1
+            geoms = np.array(df.geometry[sub_cluster])
+            geom_index = np.random.choice(sub_cluster, np.int(n_lines), replace=False)
+            lines = MultiLineString(list(df.geometry[geom_index]))
+            if lines[-1].length > 0.05:
+                day.append(dsl[0])
+                Speed.append(dsl[1])
+                Length.append(dsl[2])
+                Route.append(i)
+                #sub_cluster = np.array(cluster)[np.where((df.day[cluster] == dsl[0]) & (df.Speed[cluster] == dsl[1]) & (df.Length[cluster] == dsl[2]))[0]]
+                #n_lines = 1
+                Count.append(len(sub_cluster))
+                #geoms = np.array(df.geometry[sub_cluster])
+                #geom_index = np.random.choice(sub_cluster, np.int(n_lines), replace=False)
+                #lines = MultiLineString(list(df.geometry[geom_index]))
+                geometry.append(lines)
+            
+    df_clustered = gpd.GeoDataFrame({'Day': day,
+                                     'Speed': Speed,
+                                     'Length': Length,
+                                     'Count': Count,
+                                     'Route': Route,
                                      'geometry': geometry})
     return df_clustered
