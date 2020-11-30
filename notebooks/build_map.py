@@ -57,7 +57,7 @@ def build_map(map_path):
     city_layers = [
         city_base.transform_filter(alt.datum.name == name).mark_text(angle=angle, font='Gill Sans', color='grey') for (name, angle) in zip(location_df.name, location_df.angle)
     ]
-    
+
     city_layers = alt.layer(*city_layers)
 
 
@@ -171,12 +171,12 @@ def build_map(map_path):
     lon_annotations = alt.Chart(lon_labels).encode(text='Name:N',
                                                    latitude='LAT',
                                                    longitude='LON').mark_text(angle=270, font='Gill Sans', color = 'grey')
-    
+
     water_labels = [['Treas. Island', 37.839455, -122.376198, 0],
                     ['San Pablo Bay', 38.064760, -122.39, 0],
                     #['Napa River',38.115239, -122.277615,60],
                     ['San Francisco Bay', 37.65, -122.275, 0],
-                    ['Suisan Bay', 38.0782, -122.0724, 0]
+                    ['Suisun Bay', 38.0782, -122.0724, 0]
                    ]
 
     water_location_df = gpd.GeoDataFrame({
@@ -192,7 +192,7 @@ def build_map(map_path):
         water_base.transform_filter(alt.datum.name == name).mark_text(angle=angle, font='Gill Sans', color='lightgrey')
         for (name, angle) in zip(water_location_df.name, water_location_df.angle)
     ]
-    
+
     water_layers = alt.layer(*water_layers)
 
     final_chart = alt.layer(base, bridge_map, lat_map, lon_map, lat_annotations,
@@ -204,22 +204,22 @@ def vsl_map(vsl_path, map_path, output_path=None):
     """
     Given input files to define the map's geography and
     location of vessels, return a map.
-    
+
     Args:
         vsl_path: str giving the path to the vessel CSV
                   file
         map_path: str giving the path to the base map's
                   topojson file
-                  
+
     Returns:
         alt.Chart
     """
     # Build the base map
     base_map = build_map(map_path)
-    
+
     # Read the vessel data
     df = gpd.read_file(vsl_path, GEOM_POSSIBLE_NAMES='geometry', KEEP_GEOM_COLUMNS='NO')
-    
+
     # Define Altair selections
     selection    = alt.selection_multi(fields=['Speed', 'Length'])
     day_select   = alt.selection_multi(fields=['Day'])
@@ -231,13 +231,13 @@ def vsl_map(vsl_path, map_path, output_path=None):
         alt.value('orange'),
         alt.value('lightgray')
     )
-    
+
     day_color = alt.condition(
         day_select,
         alt.value('orange'),
         alt.value('lightgray')
     )
-    
+
     route_color = alt.condition(
         route_select,
         alt.value('orange'),
@@ -250,7 +250,7 @@ def vsl_map(vsl_path, map_path, output_path=None):
         alt.value(0.4),
         alt.value(0.005)
     )
-    
+
     # Build the actual map
     vessel_map = alt.Chart(df).mark_geoshape(
         filled=False,
@@ -266,7 +266,7 @@ def vsl_map(vsl_path, map_path, output_path=None):
     ).add_selection(
         route_select
     )
-    
+
     # Build the rectangular speed/length select pad
     legend = alt.Chart(
         df
@@ -280,7 +280,7 @@ def vsl_map(vsl_path, map_path, output_path=None):
     ).add_selection(
         selection
     )
-    
+
     # Build the bar chart of transits by day
     # TODO: this currently drops days that aren't shown.  I'd prefer
     # that it zeroed them out but didn't drop them
@@ -304,7 +304,7 @@ def vsl_map(vsl_path, map_path, output_path=None):
         width=80,
         height=100
     )
-    
+
     # Build the route bart chart
     # TODO: reduce this to the top 12-15 items
     route_hist = alt.Chart(
@@ -327,13 +327,13 @@ def vsl_map(vsl_path, map_path, output_path=None):
     ).properties(
         width=80,
     )
-    
+
     # The combined map is a combination of the visualizations
     # described above
     combined_map = base_map + vessel_map | (legend & day_hist & route_hist)
-    
+
     if output_path:
         with open(output_path, 'w') as jsonfile:
             json.dump(combined_map.to_json(), jsonfile)
-    
+
     return combined_map
