@@ -57,7 +57,7 @@ def build_map():
     city_layers = [
         city_base.transform_filter(alt.datum.name == name).mark_text(angle=angle, font='Gill Sans', color='grey') for (name, angle) in zip(location_df.name, location_df.angle)
     ]
-    
+
     city_layers = alt.layer(*city_layers)
 
 
@@ -80,7 +80,7 @@ def build_map():
                ['Richmond-San Rafael', 37.935406, -122.448417],
                ['Richmond-San Rafael', 37.932674, -122.408188],
                ['Richmond-San Rafael', 37.932369, -122.404873],
-               ['San Mateo Bridge', 37.573722, -122.262446],
+               ['San Mateo Bridge', 37.573083, -122.263037],
                ['San Mateo Bridge', 37.590169, -122.244033],
                ['San Mateo Bridge', 37.624548, -122.131794],
                ['Dumbarton Bridge', 37.495561, -122.132929],
@@ -89,7 +89,11 @@ def build_map():
                ['Dumbarton Bridge', 37.522030, -122.102665],
                ['Dumbarton Bridge', 37.530088, -122.093356],
                ['Dumbarton Bridge', 37.532784, -122.087688],
-               ['Dumbarton Bridge', 37.534916, -122.076658]
+               ['Dumbarton Bridge', 37.534916, -122.076658],
+               ['Carquinez Bridge', 38.056094, -122.225308],
+               ['Carquinez Bridge', 38.065179, -122.226084],
+               ['Benicia Bridge', 38.048803, -122.128219],
+               ['Benicia Bridge', 38.035514, -122.117658]
               ]
 
     bridges = gpd.GeoDataFrame(bridges, columns=['Name', 'LAT', 'LON'])
@@ -121,7 +125,6 @@ def build_map():
         name = str(abs(j))+"°N"
         val1 = [name, j, min_lon]
         val2 = [name, j, max_lon]
-        #val3 = [name, j+0.008, min_lon+0.02]
         val3 = [name, j, min_lon_text+0.02]
         lat_lines.append(val1)
         lat_lines.append(val2)
@@ -167,12 +170,12 @@ def build_map():
     lon_annotations = alt.Chart(lon_labels).encode(text='Name:N',
                                                    latitude='LAT',
                                                    longitude='LON').mark_text(angle=270, font='Gill Sans', color = 'grey')
-    
+
     water_labels = [['Treas. Island', 37.839455, -122.376198, 0],
                     ['San Pablo Bay', 38.064760, -122.39, 0],
                     #['Napa River',38.115239, -122.277615,60],
                     ['San Francisco Bay', 37.65, -122.275, 0],
-                    ['Suisan Bay', 38.0782, -122.0724, 0]
+                    ['Suisun Bay', 38.0782, -122.0724, 0]
                    ]
 
     water_location_df = gpd.GeoDataFrame({
@@ -188,11 +191,37 @@ def build_map():
         water_base.transform_filter(alt.datum.name == name).mark_text(angle=angle, font='Gill Sans', color='lightgrey')
         for (name, angle) in zip(water_location_df.name, water_location_df.angle)
     ]
-    
+
     water_layers = alt.layer(*water_layers)
 
+    scale_rects = [['1',38.95,122.15],
+                   ['1',38.96,122.15],
+                   ['1',38.96,122.15+(1/47.56)],
+                   ['1',38.95,122.15+(1/47.56)],
+                   ['2',38.95,122.15+2*(1/47.56)],
+                   ['2',38.96,122.15+2*(1/47.56)],
+                   ['2',38.96,122.15+7*(1/47.56)],
+                   ['2',38.95,122.15+7*(1/47.56)]]
+
+    # scale_df = gpd.GeoDataFrame({
+    #     'lon': [x[2] for x in scale_rects],
+    #     'lat': [x[1] for x in scale_rects],
+    #     'name': [x[0] for x in scale_rects],
+    #     'color': [x[3] for x in scale_rects]
+    # })
+
+    scale_df = gpd.GeoDataFrame(scale_rects, columns=['Name', 'LAT', 'LON'])
+    scale_pts = [Point(xy) for xy in zip(scale_df.LON, scale_df.LAT)]
+    scale_df['geometry'] = scale_pts
+    scales = scale_df.groupby(['Name'])['geometry'].apply(lambda x: LineString(x.tolist()))
+    scales = gpd.GeoDataFrame(scales)
+    print(scales)
+    print(scale_rects)
+
+    scale = alt.Chart(scales).mark_geoshape(filled=True, color='black', strokeWidth=1.25)
+
     final_chart = alt.layer(base, bridge_map, lat_map, lon_map, lat_annotations,
-                            lon_annotations, city_layers, water_layers)
+                            lon_annotations, city_layers, water_layers, scale)
     return final_chart
 
 
@@ -205,13 +234,15 @@ def vsl_map(df):
                           alt.value('orange'),
                           alt.value('lightgray'))
 
-    opacity = alt.condition(selection, alt.value(0.25), alt.value(0))
+    #opacity = alt.condition(selection, alt.value(0.3), alt.value(0))
+    #opacity = alt.condition(selection, 'Count', alt.value(0))
+    opacity = alt.condition(selection, alt.Opacity('Count:Q', legend=None), alt.value(0))
 
     vessel_map = alt.Chart(df).mark_geoshape(filled=False,
                                              color='orange',
                                              strokeWidth=1).encode(opacity=opacity)
 
-    legend = alt.Chart(df).mark_rect().encode(y=alt.Y('Speed:O',
+    legend = alt.Chart(df).mark_rect(strokeWidth=0.5, stroke='white').encode(y=alt.Y('Speed:O',
                                               axis=alt.Axis(orient='right')),
                                               x='Length:O',
                                               color=color).add_selection(selection)
