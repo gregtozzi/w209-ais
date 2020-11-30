@@ -30,11 +30,11 @@ def getTue():
 
 @app.route('/getMap/Wed')
 def getWed():
-  return Thu
+  return Wed
 
 @app.route('/getMap/Thu')
 def getThu():
-  return Tue
+  return Thu
 
 @app.route('/getMap/Fri')
 def getFri():

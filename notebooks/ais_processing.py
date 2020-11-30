@@ -390,34 +390,108 @@ def binned_transits(df, output_path=None):
     return df_out
 
 
-def cluster_transits(df, diff_threshold=0.01, hausdorff_threshold=0.03):
-    lines = df.geometry
-    # Compute a bounding box for each transit
-    c_vec = np.array([np.array(x.bounds) for x in df.geometry])
-
+def cluster_transits(df, bounds_threshold=1e-2, dist_threshold=0.05, len_threshold=0.1):
     clusters = []
-    index_stack = np.arange(len(df))
-    while len(index_stack) > 1:
+    bounds = np.array([np.array(x.bounds) for x in df.geometry])
+    lengths = df.length
+    stack = list(range(len(df)))
+    stack.reverse()
+    while len(stack) > 1:
         cluster = []
-        i = index_stack[0]
-        cluster.append(i)
-        c_vec_i = c_vec[i]
-        index_stack = index_stack[1:]
-        c_vec_j = c_vec[index_stack]
-        abs_diff = (np.abs(c_vec_j - c_vec_i)).max(axis=1)
-        candidates = index_stack[np.where(abs_diff < diff_threshold)[0]]
-        h_dist = np.array([lines[i].hausdorff_distance(lines[j]) for j in candidates])
-        cluster_mbrs = candidates[np.where(h_dist < hausdorff_threshold)[0]]
-        for mbr in cluster_mbrs:
-            cluster.append(mbr)
+        base = stack.pop()
+        cluster.append(base)
+        base_len = lengths[base]
+        len_diff = np.abs((base_len - lengths) / base_len)
+        len_candidates = np.intersect1d(np.where(len_diff < len_threshold)[0], stack)
+        base_bounds = bounds[base]
+        bounds_diff = np.sum((bounds - base_bounds) ** 2, axis=1)
+        bounds_candidates = np.intersect1d(np.where(bounds_diff < bounds_threshold)[0], stack)
+        candidates = np.intersect1d(len_candidates, bounds_candidates)
+        distances = np.array([df.geometry[base].hausdorff_distance(df.geometry[i]) for i in candidates])
+        cluster_mbrs = candidates[np.where(distances < dist_threshold)[0]]
+        for i in cluster_mbrs:
+            cluster.append(i)
+            stack.remove(i)
         clusters.append(cluster)
-        index_stack = np.setdiff1d(index_stack, cluster_mbrs)
     return clusters
 
 
-#def write_clusters(df, transits):
-#    for transit in transits
+def cluster_df(df, clusters):
+    # Pick significant clusters
+    n_clusters = np.array([len(cluster) for cluster in clusters])
+    sig_clusters = np.where(n_clusters >= 10)[0]
+    
+    day = []
+    Speed = []
+    Length = []
+    Count = []
+    Route = []
+    geometry = []
+    
+    for i in sig_clusters:
+        cluster = clusters[i]
+        day_speed_len = set([xyz for xyz in zip(df.day[cluster], df.Speed[cluster], df.Length[cluster])])
+        for dsl in day_speed_len:
+            day.append(dsl[0])
+            Speed.append(dsl[1])
+            Length.append(dsl[2])
+            Route.append(i)
+            sub_cluster = np.array(cluster)[np.where((df.day[cluster] == dsl[0]) & (df.Speed[cluster] == dsl[1]) & (df.Length[cluster] == dsl[2]))[0]]
+            n_lines = np.ceil(len(sub_cluster) / 10)
+            Count.append(len(sub_cluster) / n_lines / 10)
+            geoms = np.array(df.geometry[sub_cluster])
+            geom_index = np.random.choice(sub_cluster, np.int(n_lines), replace=False)
+            lines = MultiLineString(list(df.geometry[geom_index]))
+            geometry.append(lines)
+            
+    df_clustered = gpd.GeoDataFrame({'Day': day,
+                                     'Speed': Speed,
+                                     'Length': Length,
+                                     'Count': Count,
+                                     'Route': Route,
+                                     'geometry': geometry})
+    return df_clustered
 
 
-
-
+def cluster_df_test(df):
+    clusters = cluster_transits(df)
+    # Pick significant clusters
+    n_clusters = np.array([len(cluster) for cluster in clusters])
+    sig_clusters = np.where(n_clusters >= 10)[0]
+    
+    day = []
+    Speed = []
+    Length = []
+    Count = []
+    Route = []
+    geometry = []
+    
+    for i in sig_clusters:
+        cluster = clusters[i]
+        day_speed_len = set([xyz for xyz in zip(df.day[cluster], df.Speed[cluster], df.Length[cluster])])
+        for dsl in day_speed_len:
+            sub_cluster = np.array(cluster)[np.where((df.day[cluster] == dsl[0]) & (df.Speed[cluster] == dsl[1]) & (df.Length[cluster] == dsl[2]))[0]]
+            n_lines = 1
+            geoms = np.array(df.geometry[sub_cluster])
+            geom_index = np.random.choice(sub_cluster, np.int(n_lines), replace=False)
+            lines = MultiLineString(list(df.geometry[geom_index]))
+            if lines[-1].length > 0.05:
+                day.append(dsl[0])
+                Speed.append(dsl[1])
+                Length.append(dsl[2])
+                Route.append(i)
+                #sub_cluster = np.array(cluster)[np.where((df.day[cluster] == dsl[0]) & (df.Speed[cluster] == dsl[1]) & (df.Length[cluster] == dsl[2]))[0]]
+                #n_lines = 1
+                Count.append(len(sub_cluster))
+                #geoms = np.array(df.geometry[sub_cluster])
+                #geom_index = np.random.choice(sub_cluster, np.int(n_lines), replace=False)
+                #lines = MultiLineString(list(df.geometry[geom_index]))
+                geometry.append(lines)
+            
+    df_clustered = gpd.GeoDataFrame({'Day': day,
+                                     'Speed': Speed,
+                                     'Length': Length,
+                                     'Count': Count,
+                                     'Route': Route,
+                                     'geometry': geometry})
+    return df_clustered

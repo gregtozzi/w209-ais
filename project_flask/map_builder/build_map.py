@@ -80,7 +80,7 @@ def build_map():
                ['Richmond-San Rafael', 37.935406, -122.448417],
                ['Richmond-San Rafael', 37.932674, -122.408188],
                ['Richmond-San Rafael', 37.932369, -122.404873],
-               ['San Mateo Bridge', 37.573722, -122.262446],
+               ['San Mateo Bridge', 37.573083, -122.263037],
                ['San Mateo Bridge', 37.590169, -122.244033],
                ['San Mateo Bridge', 37.624548, -122.131794],
                ['Dumbarton Bridge', 37.495561, -122.132929],
@@ -89,7 +89,11 @@ def build_map():
                ['Dumbarton Bridge', 37.522030, -122.102665],
                ['Dumbarton Bridge', 37.530088, -122.093356],
                ['Dumbarton Bridge', 37.532784, -122.087688],
-               ['Dumbarton Bridge', 37.534916, -122.076658]
+               ['Dumbarton Bridge', 37.534916, -122.076658],
+               ['Carquinez Bridge', 38.056094, -122.225308],
+               ['Carquinez Bridge', 38.065179, -122.226084],
+               ['Benicia Bridge', 38.048803, -122.128219],
+               ['Benicia Bridge', 38.035514, -122.117658]
               ]
 
     bridges = gpd.GeoDataFrame(bridges, columns=['Name', 'LAT', 'LON'])
@@ -230,13 +234,15 @@ def vsl_map(df):
                           alt.value('orange'),
                           alt.value('lightgray'))
 
-    opacity = alt.condition(selection, alt.value(0.25), alt.value(0))
+    #opacity = alt.condition(selection, alt.value(0.3), alt.value(0))
+    #opacity = alt.condition(selection, 'Count', alt.value(0))
+    opacity = alt.condition(selection, alt.Opacity('Count:Q', legend=None), alt.value(0))
 
     vessel_map = alt.Chart(df).mark_geoshape(filled=False,
                                              color='orange',
                                              strokeWidth=1).encode(opacity=opacity)
 
-    legend = alt.Chart(df).mark_rect().encode(y=alt.Y('Speed:O',
+    legend = alt.Chart(df).mark_rect(strokeWidth=0.5, stroke='white').encode(y=alt.Y('Speed:O',
                                               axis=alt.Axis(orient='right')),
                                               x='Length:O',
                                               color=color).add_selection(selection)
