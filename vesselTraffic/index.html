@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>San Francisco Bay Vessel Traffic</title>
+		<link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+    <link rel="stylesheet" href="css/main.css" />
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega@5"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega-lite@4.8.1"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega-embed@6"></script>
+  </head>
+
+  <body>
+		<div class="container">
+			<h1>Visualizing San Francisco Bay Vessel Traffic</h1>
+			<div class="chart-footer">Emma Tebbe | Greg Tozzi | Joanna Wang</div>
+			<div class="chart-footer">UC Berkeley School of Information</div>
+			
+			<div class="divider"></div>
+			
+			<div class="columns">
+				<div class="column">
+					<h2>Motivation</h2>
+					<p>A professional mariner typically conducts some sort of area familiarization or study before entering restricted or unfamiliar waters.  Nautical charts and publications such as the <a href="https://nauticalcharts.noaa.gov/publications/coast-pilot/index.html">National Oceanographic and Atmospheric Administration (NOAA) Coast Pilot</a> give overviews of geography and bathymetry, publications like the Light List provide details on aids to navigation, and tide and current tables help the mariner understand the environmental conditions that will be encountered.  Traffic patterns may be briefly described in publications or hinted at in charts, but there is no tool that gives the mariner an understanding of the patterns of life in a harbor.  We aim to fill this gap.</p>
+					<p>Our tool provides a mariner with a means of visualizing and disaggregating historical vessel traffic by the day of the week, the vessel's length overall and maximum speed, and by a description of the route.  The workflow that generated the tool is generalizable to any geographic area, but we targeted San Francisco Bay to demonstrate the tool's utility.  The tool provides quick familiarity with traffic density and key routes, giving the mariner an understanding of where challenging collision avoidance situations are most likely encountered.</p>
+				</div>
+				<div class="column">
+					<h2>The Data</h2>
+					<p><a href="https://www.navcen.uscg.gov/?pageName=aismain">The Automatic Identification System (AIS)</a> is a self organizing time demand multiple access (SOTDMA) network of vessels and shore nodes transmitting and receiving on marine band very high frequency (VHF) channels.  AIS is mandatory for large vessels and most vessels engaged in commercial service.  Many vessels not required to carry AIS do so out of prudence.</p>
+					<p>The U.S. Coast Guard (USCG) logs domestic AIS data.  NOAA and the U.S. Department of the Interior’s Bureau of Ocean Energy Management (BOEM) convert the USCG's data to CSV files and posts them publicly on <a href="https://marinecadastre.gov">Marine Cadastre</a>.  The vessel transits you will view in the visualization below are built from data in these files.  One month of data for San Francisco Bay yielded 14,000 discrete transits built from over 680,000 individual AIS reports.</p>
+					<p>The map is built from geospatial data created by the City of San Francisco Department Of Telecommunications and Information Services and retrieved from the <a href="https://geodata.lib.berkeley.edu">UC Berkeley Library GeoData Repository</a>.
+				</div>
+			</div>
+			<div class="columns">
+				<div class="column">
+					<h2>Using the Tool</h2>
+					<p><strong>Filtering</strong>. Each orange line on the chart represents up to ten individual vessel transits.  Lines representing fewer than ten transits are shown progressively lighter.  Similar transits are combined into clusters.  Filter transits directly by clicking on a cluster of interest on the chart.  You can also filter on vessel length/speed combinations, day of the week, and transit type using the three selectors to the right of the chart.  Select more than one item from a single selector by shift-clicking.  Clear your filters by double clicking the selector of interest.</p>
+					<p><strong>An example</strong>. Let's say you are interested in determining which of the Bay's commercial facilities receives the most deep draft vessel traffic.  Start by shift-clicking the nine boxes representing vessels greater than 100m in length across all available speeds.  Note that the most frequent transit for large vessels is from sea to the Port of Oakland's inner and outer harbors but that some vessels proceed to anchor before transiting inbound Oakland.</p>
+				</div>
+				<div class="column">
+			    <div id="vis"></div>
+					<div class="chart-footer">From U.S. Coast Guard AIS data compiled by NOAA and BOEM | January, 2015</div>
+					<div class="chart-footer">Cartographic data from the City of San Francisco | 2004</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="js/main.js"></script>
+</html>
