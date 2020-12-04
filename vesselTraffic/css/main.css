@@ -6,6 +6,10 @@ body {
   font-family: 'Roboto', sans-serif;
 }
 
+a:visited {
+	color: #fda428;
+}
+
 h1 {
   font-family: 'Roboto Condensed', sans-serif;
   color: #424242;
@@ -85,16 +89,4 @@ div.tooltip {
     border: 0px;    
     border-radius: 8px;     
     pointer-events: none;     
-}
-
-.lazy {
-    fill: #349698;
-}
-
-.active{
-    fill: #ee1f4f;
-}
-
-.meh{
-    fill: #424242;
 }
