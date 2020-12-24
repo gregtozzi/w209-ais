@@ -12,7 +12,7 @@ We ran through several iterations of the map design beginning with simple Matplo
 
 Our final design was informed by several structured and recorded user tests during which we presented professional mariners with specific tasks to perform and observed their interaction with the visualzation.  We then applied the MoSCoW method to prioritze improvements.
 
-**Skills demonstrated:** *Visualization* | *Agile* | *User Tests* | *MoSCoW* | *Geospatial Analysis* | *Design of Interactions* | *Deployment to the Web*
+**Skills demonstrated:** *Visualization* | *User Testing* | *MoSCoW* | *Geospatial Analysis* | *Design of Interactions* | *Deployment to the Web*
 
 **Languages and frameworks**: *Python* | *Tableau* | *Altair* | *Vega-Lite* | *Mapshaper* | *Geopandas* | *Shapely* | *Flask* | *HTML/CSS* | *D3* | *Leaflet* | *Javascript*
 
