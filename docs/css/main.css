@@ -6,6 +6,16 @@ body {
   font-family: 'Roboto', sans-serif;
 }
 
+a {
+	color: #fda428;
+	outline: 0;
+	text-decoration: none;
+}
+
+a:visited {
+	color: #fda428;
+}
+
 h1 {
   font-family: 'Roboto Condensed', sans-serif;
   color: #424242;
@@ -17,6 +27,11 @@ h2 {
 }
 
 h3 {
+  font-family: 'Roboto Condensed', sans-serif;
+  color: #424242;
+}
+
+h6 {
   font-family: 'Roboto Condensed', sans-serif;
   color: #424242;
 }
@@ -80,16 +95,4 @@ div.tooltip {
     border: 0px;    
     border-radius: 8px;     
     pointer-events: none;     
-}
-
-.lazy {
-    fill: #349698;
-}
-
-.active{
-    fill: #ee1f4f;
-}
-
-.meh{
-    fill: #424242;
 }
