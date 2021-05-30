@@ -1,0 +1,95 @@
+/* roboto-condensed-regular - latin */
+@import url('https://fonts.googleapis.com/css2?family=Roboto&family=Roboto+Condensed:wght@700&display=swap');
+
+body {
+  margin: 30px;
+  font-family: 'Roboto', sans-serif;
+}
+
+h1 {
+  font-family: 'Roboto Condensed', sans-serif;
+  color: #424242;
+}
+
+h2 {
+  font-family: 'Roboto Condensed', sans-serif;
+  color: #424242;
+}
+
+h3 {
+  font-family: 'Roboto Condensed', sans-serif;
+  color: #424242;
+}
+
+.description {
+  font-family: 'Roboto', sans-serif;
+  max-width: 600px;
+  text-align: justify;
+  text-justify: inter-word;
+  padding-bottom: 15px;
+}
+
+.form {
+  font-family: 'Roboto Condensed', sans-serif;
+}
+
+li {
+  font-family: 'Roboto', sans-serif;
+  max-width: 540px;
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+th {
+  background: #dfdfdf;
+  font-weight: bold;
+}
+
+td,th {
+  border: 1px solid transparent;
+  height: 30px;
+}
+
+tr:nth-child(even)  td {
+  background: #f1f1f1;
+}
+tr:nth-child(odd) td {
+  background: #fefefe;
+}
+
+td {
+  padding: 0 10px;
+  background: #fafafa;
+  text-align: left;
+}
+
+.chart-footer {
+  font-size: 10pt;
+  color: #424242;
+}
+
+div.tooltip { 
+    position: absolute;     
+    text-align: center;     
+    width: 90px;          
+    height: 28px;         
+    padding: 2px;       
+    font: 12px sans-serif;
+    color: white;  
+    background: #a4a4a4; 
+    border: 0px;    
+    border-radius: 8px;     
+    pointer-events: none;     
+}
+
+.lazy {
+    fill: #349698;
+}
+
+.active{
+    fill: #ee1f4f;
+}
+
+.meh{
+    fill: #424242;
+}
