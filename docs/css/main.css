@@ -16,6 +16,10 @@ a:visited {
 	color: #fda428;
 }
 
+a:hover {
+	color: #fda428;
+}
+
 h1 {
   font-family: 'Roboto Condensed', sans-serif;
   color: #424242;
