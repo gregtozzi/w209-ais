@@ -2,7 +2,7 @@
 
 #### [Greg Tozzi](https://www.linkedin.com/in/gregorytozzi/) | Emma Tebbe | Joanna Wang | December, 2020
 
-### [View the Visualization](https://people.ischool.berkeley.edu/~greg.tozzi/w209/)
+### [View the Visualization](https://gregtozzi.com/w209-ais/)
 
 *This is our project from the [data visualization](https://www.ischool.berkeley.edu/courses/datasci/209) course that we took as part of the UC Berkeley School of Information's [Master of Information and Data Science](https://datascience.berkeley.edu) program.  Using massive datasets made available by the [National Oceanographic and Atmospheric Administration and the Bureau of Ocean Energy Management](https://marinecadastre.gov/ais/), we developed a bespoke interactive visualization of vessel traffic in San Francisco Bay.*
 
